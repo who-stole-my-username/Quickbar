@@ -1,0 +1,119 @@
+pragma Singleton
+import QtQuick
+import Quickshell
+
+Singleton {
+	
+		readonly property color background: "#131318"
+	
+		readonly property color error: "#ffb4ab"
+	
+		readonly property color error_container: "#93000a"
+	
+		readonly property color inverse_on_surface: "#303036"
+	
+		readonly property color inverse_primary: "#585992"
+	
+		readonly property color inverse_surface: "#e4e1e9"
+	
+		readonly property color on_background: "#e4e1e9"
+	
+		readonly property color on_error: "#690005"
+	
+		readonly property color on_error_container: "#ffdad6"
+	
+		readonly property color on_primary: "#292a60"
+	
+		readonly property color on_primary_container: "#e1dfff"
+	
+		readonly property color on_primary_fixed: "#14134a"
+	
+		readonly property color on_primary_fixed_variant: "#404178"
+	
+		readonly property color on_secondary: "#2f2f42"
+	
+		readonly property color on_secondary_container: "#e2e0f9"
+	
+		readonly property color on_secondary_fixed: "#1a1a2c"
+	
+		readonly property color on_secondary_fixed_variant: "#454559"
+	
+		readonly property color on_success: "#003914"
+	
+		readonly property color on_success_container: "#b7f1ba"
+	
+		readonly property color on_surface: "#e4e1e9"
+	
+		readonly property color on_surface_variant: "#c8c5d0"
+	
+		readonly property color on_tertiary: "#46263a"
+	
+		readonly property color on_tertiary_container: "#ffd8ec"
+	
+		readonly property color on_tertiary_fixed: "#2f1124"
+	
+		readonly property color on_tertiary_fixed_variant: "#5f3c51"
+	
+		readonly property color outline: "#918f9a"
+	
+		readonly property color outline_variant: "#47464f"
+	
+		readonly property color primary: "#c1c1ff"
+	
+		readonly property color primary_container: "#404178"
+	
+		readonly property color primary_fixed: "#e1dfff"
+	
+		readonly property color primary_fixed_dim: "#c1c1ff"
+	
+		readonly property color scrim: "#000000"
+	
+		readonly property color secondary: "#c6c4dd"
+	
+		readonly property color secondary_container: "#454559"
+	
+		readonly property color secondary_fixed: "#e2e0f9"
+	
+		readonly property color secondary_fixed_dim: "#c6c4dd"
+	
+		readonly property color shadow: "#000000"
+	
+		readonly property color source_color: "#9493ae"
+	
+		readonly property color success: "#9bd4a0"
+	
+		readonly property color success_container: "#1c5129"
+	
+		readonly property color success_source: "#93dc5d"
+	
+		readonly property color success_value: "#93dc5d"
+	
+		readonly property color surface: "#131318"
+	
+		readonly property color surface_bright: "#39383f"
+	
+		readonly property color surface_container: "#1f1f25"
+	
+		readonly property color surface_container_high: "#2a292f"
+	
+		readonly property color surface_container_highest: "#35343a"
+	
+		readonly property color surface_container_low: "#1b1b21"
+	
+		readonly property color surface_container_lowest: "#0e0e13"
+	
+		readonly property color surface_dim: "#131318"
+	
+		readonly property color surface_tint: "#c1c1ff"
+	
+		readonly property color surface_variant: "#47464f"
+	
+		readonly property color tertiary: "#e9b9d3"
+	
+		readonly property color tertiary_container: "#5f3c51"
+	
+		readonly property color tertiary_fixed: "#ffd8ec"
+	
+		readonly property color tertiary_fixed_dim: "#e9b9d3"
+	
+}
