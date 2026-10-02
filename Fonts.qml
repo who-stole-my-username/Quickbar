@@ -14,6 +14,7 @@ Singleton {
     readonly property int sizeSmallIcon: 15
 
     readonly property int sizeXXS: 7
+    readonly property int sizeXS: 12
     readonly property int sizeS: 14
     readonly property int sizeM: 16
     readonly property int sizeL: 20

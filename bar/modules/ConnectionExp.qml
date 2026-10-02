@@ -17,7 +17,9 @@ Item {
 
     property bool wifiExp: false
     property bool vpnExp: false
-    property real connectionsHeight: (wifiExp ? 300 : 80) + (vpnExp ? 200 : 80) + 92 + 15
+    property real connectionsHeight: (wifiExp ? 80 + connectionsContainer.height + 20 : 80) + (vpnExp ? 200 : 80) + 92 + 15
+    
+    onWifiExpChanged: if (wifiDev) wifiDev.scannerEnabled = wifiExp
 
     Rectangle {
         id: barContainer
@@ -26,7 +28,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 1
         anchors.margins: 15
-        height: idk.wifiExp ? 300 : 80
+        height: idk.wifiExp ? 80 + connectionsContainer.height + 20 : 80
         radius: 12
         color: Colors.surface_container
         clip: true
@@ -112,6 +114,83 @@ Item {
                 font.family: Fonts.ui
                 text: activeNet == null ? "Disabled" : "Enabled"
                 color: Colors.on_secondary
+            }
+        }
+
+        ListView {
+            id: connectionsContainer
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.topMargin: 80
+            anchors.margins: 20
+            height: Math.min(contentHeight, 210)
+            spacing: 3
+            clip: true
+
+            model: idk.wifiDev ? idk.wifiDev.networks : null
+
+            Behavior on contentY {
+                NumberAnimation {
+                    duration: Anims.spatialFastDur
+                    easing.type: Easing.Bezier
+                    easing.bezierCurve: Anims.spatialFast
+                }
+            }
+
+            delegate: Rectangle {
+
+                required property var modelData
+                required property int index
+
+                id: item
+                color: Colors.surface_container_highest
+                topLeftRadius: index === 0 ? 10 : 3
+                topRightRadius: index === 0 ? 10 : 3
+                bottomLeftRadius: index === connectionsContainer.count - 1 ? 10 : 3
+                bottomRightRadius: index === connectionsContainer.count - 1 ? 10 : 3
+                height: 50
+                width: parent.width
+
+                Text {
+                  id: connectionsListIcon
+                  anchors.verticalCenter: parent.verticalCenter
+                  anchors.left: parent.left
+                  anchors.leftMargin: 10
+                  font.pointSize: Fonts.sizeIcon
+                  font.family: Fonts.icon
+                  text: {
+                      if (modelData.signalStrength == null) {
+                          return "signal_wifi_off"
+                      } else {
+                          if (modelData.signalStrength <= 0.1) {
+                              return "signal_wifi_0_bar"
+                          } else if (modelData.signalStrength <= 0.2) {
+                              return "network_wifi_1_bar"
+                          } else if (modelData.signalStrength <= 0.4) {
+                              return "network_wifi_2_bar"
+                          } else if (modelData.signalStrength <= 0.6) {
+                              return "network_wifi_3_bar"
+                          } else if (modelData.signalStrength <= 0.8) {
+                              return "network_wifi"
+                          } else if (modelData.signalStrength <= 1) {
+                              return "signal_wifi_4_bar"
+                          }
+                      }
+                  }
+                  color: Colors.primary
+                }
+
+                Text {
+                  id:connectionsListName
+                  anchors.verticalCenter: parent.verticalCenter
+                  anchors.left: connectionsListIcon.right
+                  anchors.leftMargin: 10
+                  font.pointSize: Fonts.sizeS
+                  font.family: Fonts.ui
+                  color: Colors.on_surface
+                  text: modelData.name
+                }
             }
         }
     }
