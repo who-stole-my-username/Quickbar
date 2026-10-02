@@ -1,6 +1,7 @@
 import qs
 import Quickshell
 import Quickshell.Io
+import Quickshell.Wayland
 import QtQuick
 import QtQuick.Layouts
 import "modules" as Modules
@@ -18,6 +19,8 @@ Variants {
             property string pendingPanel: ""
 
             property var panelModules: ({ "battery": battery, "brightness": brightness, "volume": volume, "connection": connection })
+
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
             screen: modelData
             implicitHeight: 1000

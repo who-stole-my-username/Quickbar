@@ -138,58 +138,139 @@ Item {
                 }
             }
 
-            delegate: Rectangle {
+            delegate: Item {
 
                 required property var modelData
                 required property int index
 
-                id: item
-                color: Colors.surface_container_highest
-                topLeftRadius: index === 0 ? 10 : 3
-                topRightRadius: index === 0 ? 10 : 3
-                bottomLeftRadius: index === connectionsContainer.count - 1 ? 10 : 3
-                bottomRightRadius: index === connectionsContainer.count - 1 ? 10 : 3
-                height: 50
-                width: parent.width
+                property bool expanded: false
+                readonly property bool last: index === connectionsContainer.count -1
 
-                Text {
-                  id: connectionsListIcon
-                  anchors.verticalCenter: parent.verticalCenter
-                  anchors.left: parent.left
-                  anchors.leftMargin: 10
-                  font.pointSize: Fonts.sizeIcon
-                  font.family: Fonts.icon
-                  text: {
-                      if (modelData.signalStrength == null) {
-                          return "signal_wifi_off"
-                      } else {
-                          if (modelData.signalStrength <= 0.1) {
-                              return "signal_wifi_0_bar"
-                          } else if (modelData.signalStrength <= 0.2) {
-                              return "network_wifi_1_bar"
-                          } else if (modelData.signalStrength <= 0.4) {
-                              return "network_wifi_2_bar"
-                          } else if (modelData.signalStrength <= 0.6) {
-                              return "network_wifi_3_bar"
-                          } else if (modelData.signalStrength <= 0.8) {
-                              return "network_wifi"
-                          } else if (modelData.signalStrength <= 1) {
-                              return "signal_wifi_4_bar"
+                id: item
+                height: subContainer.height + subSubContainer.anchors.topMargin + subSubContainer.height
+                width: ListView.view.width
+                onExpandedChanged: if (expanded) connectionsPasswordField.forceActiveFocus()
+                
+                Rectangle {
+                    id:subContainer
+                    color: Colors.surface_container_highest
+                    topLeftRadius: index === 0 ? 10 : 3
+                    topRightRadius: index === 0 ? 10 : 3
+                    bottomLeftRadius: (!item.expanded && item.last) ? 10 : 3
+                    bottomRightRadius: (!item.expanded && item.last) ? 10 : 3
+                    height: 50
+                    width: parent.width
+
+                    Text {
+                      id: connectionsListIcon
+                      anchors.top: parent.top
+                      anchors.topMargin: 10
+                      anchors.left: parent.left
+                      anchors.leftMargin: 10
+                      font.pointSize: Fonts.sizeIcon
+                      font.family: Fonts.icon
+                      text: {
+                          if (modelData.signalStrength == null) {
+                              return "signal_wifi_off"
+                          } else {
+                              if (modelData.signalStrength <= 0.1) {
+                                  return "signal_wifi_0_bar"
+                              } else if (modelData.signalStrength <= 0.2) {
+                                  return "network_wifi_1_bar"
+                              } else if (modelData.signalStrength <= 0.4) {
+                                  return "network_wifi_2_bar"
+                              } else if (modelData.signalStrength <= 0.6) {
+                                  return "network_wifi_3_bar"
+                              } else if (modelData.signalStrength <= 0.8) {
+                                  return "network_wifi"
+                              } else if (modelData.signalStrength <= 1) {
+                                  return "signal_wifi_4_bar"
+                              }
                           }
                       }
-                  }
-                  color: Colors.primary
+                      color: Colors.primary
+                    }
+
+                    Text {
+                      id:connectionsListName
+                      anchors.top: parent.top
+                      anchors.topMargin: 15
+                      anchors.left: connectionsListIcon.right
+                      anchors.leftMargin: 10
+                      font.pointSize: Fonts.sizeS
+                      font.family: Fonts.ui
+                      color: Colors.on_surface
+                      text: modelData.name
+                    }
+                    
+                    Text {
+                      id:connectionsListStatus
+                      anchors.top: parent.top
+                      anchors.topMargin: 10
+                      anchors.right: parent.right
+                      anchors.rightMargin: 10
+                      font.pointSize: Fonts.sizeIcon
+                      font.family: Fonts.icon
+                      color: Colors.on_surface
+                      text: modelData.connected ? "link" : ""
+                    }
+
+                    MouseArea {
+                        id: mouseArea
+                        anchors.fill: parent
+                        onClicked: {
+                            item.expanded = !item.expanded
+                        }
+                    }
+
                 }
 
-                Text {
-                  id:connectionsListName
-                  anchors.verticalCenter: parent.verticalCenter
-                  anchors.left: connectionsListIcon.right
-                  anchors.leftMargin: 10
-                  font.pointSize: Fonts.sizeS
-                  font.family: Fonts.ui
-                  color: Colors.on_surface
-                  text: modelData.name
+                Rectangle {
+                    id: subSubContainer
+                    color: Colors.surface_container_highest
+                    anchors.top: subContainer.bottom
+                    anchors.topMargin: height > 0 ? 3 : 0
+                    height: item.expanded ? 50 : 0
+                    width: parent.width
+                    visible: height > 0 
+                    clip: true
+
+                    topLeftRadius: 3
+                    topRightRadius: 3
+                    bottomRightRadius: item.last ? 10 : 3
+                    bottomLeftRadius: item.last ? 10 : 3
+
+                    Rectangle {
+                        color: "transparent"
+                        id: connectionsPasswordBox
+                        anchors.fill: parent
+
+                        TextInput {
+                            id: connectionsPasswordField
+                            anchors.fill: parent
+                            anchors.leftMargin: 10
+                            anchors.rightMargin: 10
+                            verticalAlignment: TextInput.AlignVCenter
+                            clip: true
+                            echoMode: TextInput.Password
+                            passwordCharacter: "●"
+                            font.pointSize: Fonts.sizeS
+                            font.family: Fonts.ui
+                            color: Colors.on_surface
+                            selectByMouse: true
+                        }
+
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            visible: connectionsPasswordField.text.length === 0
+                            font.pointSize: Fonts.sizeS
+                            font.family: Fonts.ui
+                            color: Colors.on_surface_variant
+                            text: "Password"
+                        }
+                    }
                 }
             }
         }
