@@ -16,7 +16,7 @@ Item {
 
     property bool wifiExp: false
     property bool vpnExp: false
-    property real connectionsHeight: (wifiExp ? 80 + connectionsContainer.height + (connectionsContainer.count === 0 ? 0 : 20) : 80) + (vpnExp ? 80 + vpnLocationSearch.height + 20 + vpnList.height + (vpnList.count === 0 ? 0 : 20) : 80) + 92 + 15
+    property real connectionsHeight: (wifiExp ? 80 + connectionsContainer.height + (connectionsContainer.count === 0 ? 70 : 20) : 80) + (vpnExp ? 80 + vpnLocationSearch.height + 20 + vpnList.height + (vpnList.count === 0 ? 70 : 20) : 80) + 92 + 15
 
     readonly property var filterCountries: {
         const allCountries = Object.keys(Countries.countries)
@@ -41,7 +41,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 1
         anchors.margins: 15
-        height: idk.wifiExp ? 80 + connectionsContainer.height + (connectionsContainer.count === 0 ? 0 : 20) : 80
+        height: idk.wifiExp ? 80 + connectionsContainer.height + (connectionsContainer.count === 0 ? 70 : 20) : 80
         radius: 12
         color: Colors.surface_container
         clip: true
@@ -318,6 +318,40 @@ Item {
                 }
             }
         }
+
+        Rectangle {
+            id: connectionsListDefaultValue
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.topMargin: 80
+            anchors.margins: 20
+            color: Colors.surface_container_highest
+            height: 50
+            radius: 10
+            visible: connectionsContainer.count === 0 ? true : false
+
+            Text {
+                id: connectionsErrorIcon
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                font.pointSize: Fonts.sizeIcon
+                font.family: Fonts.icon
+                color: Colors.on_surface
+                text: "error"
+            }
+
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: connectionsErrorIcon.right
+                anchors.leftMargin: 10
+                font.pointSize: Fonts.sizeM
+                font.family: Fonts.ui
+                color: Colors.on_surface
+                text: activeNet == null ? "No Wi-Fi adapter found" : "No networks in range"
+            }
+        }
     }
 
     Rectangle {
@@ -326,7 +360,7 @@ Item {
         anchors.right: parent.right
         anchors.top: barContainer.bottom
         anchors.margins: 15
-        height: idk.vpnExp ? 80 + vpnLocationSearch.height + 20 + vpnList.height + (vpnList.count === 0 ? 0 : 20) : 80
+        height: idk.vpnExp ? 80 + vpnLocationSearch.height + 20 + vpnList.height + (vpnList.count === 0 ? 70 : 20) : 80
         radius: 12
         color: Colors.surface_container
         clip: true
@@ -555,6 +589,41 @@ Item {
                         anchors.fill: parent
                     }
                 }
+            }
+        }
+
+        Rectangle {
+            id: vpnListDefaultValue
+            anchors.top: vpnLocationSearch.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.topMargin: 20
+            anchors.margins: 20
+            color: Colors.surface_container_highest
+            height: 50
+            radius: 10
+            visible: vpnList.count === 0 ? true : false
+            clip: true
+
+            Text {
+                id: vpnErrorIcon
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                font.pointSize: Fonts.sizeIcon
+                font.family: Fonts.icon
+                color: Colors.on_surface
+                text: "error"
+            }
+
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: vpnErrorIcon.right
+                anchors.leftMargin: 10
+                font.pointSize: Fonts.sizeM
+                font.family: Fonts.ui
+                color: Colors.on_surface
+                text: "No country matches: \[" + vpnSearchField.text.trim() + "\]"
             }
         }
     }
