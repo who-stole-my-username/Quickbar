@@ -150,7 +150,16 @@ Item {
                 height: subContainer.height + subSubContainer.anchors.topMargin + subSubContainer.height
                 width: ListView.view.width
                 onExpandedChanged: if (expanded) connectionsPasswordField.forceActiveFocus()
-                
+
+                function submitPassword() {
+                    const pwd = connectionsPasswordField.text
+                    if (pwd.length >= 8) {
+                        modelData.connectWithPsk(pwd)
+                    }
+                    connectionsPasswordField.text = ""
+                    expanded = !expanded
+                }
+
                 Rectangle {
                     id:subContainer
                     color: Colors.surface_container_highest
@@ -169,6 +178,7 @@ Item {
                       anchors.leftMargin: 10
                       font.pointSize: Fonts.sizeIcon
                       font.family: Fonts.icon
+                      color: Colors.on_surface
                       text: {
                           if (modelData.signalStrength == null) {
                               return "signal_wifi_off"
@@ -188,7 +198,6 @@ Item {
                               }
                           }
                       }
-                      color: Colors.primary
                     }
 
                     Text {
@@ -212,17 +221,25 @@ Item {
                       font.pointSize: Fonts.sizeIcon
                       font.family: Fonts.icon
                       color: Colors.on_surface
-                      text: modelData.connected ? "link" : ""
+                      text: modelData.connected ? "check" : ""
                     }
 
                     MouseArea {
                         id: mouseArea
                         anchors.fill: parent
                         onClicked: {
-                            item.expanded = !item.expanded
+                            if (modelData.connected) {
+                                modelData.disconnect()
+                                return
+                            }
+
+                            if (modelData.known) {
+                                modelData.connect()
+                            } else {
+                                item.expanded = !item.expanded
+                            }
                         }
                     }
-
                 }
 
                 Rectangle {
@@ -258,6 +275,8 @@ Item {
                             font.family: Fonts.ui
                             color: Colors.on_surface
                             selectByMouse: true
+
+                            onAccepted: item.submitPassword()
                         }
 
                         Text {
@@ -419,6 +438,3 @@ Item {
         }
     }
 }
-
-//nmcli -t -f TYPE,NAME connection show --active | rg '^(vpn|wireguard):'
-//wireguard:ProtonVPN LU#8
