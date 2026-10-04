@@ -12,7 +12,7 @@ Item {
     readonly property var signal: activeNet ? activeNet.signalStrength : 0
 
     property string activeVpn
-    property string activeVpnLocation
+    property string connectCode: ""
 
     property bool wifiExp: false
     property bool vpnExp: false
@@ -32,6 +32,13 @@ Item {
 
     function calcListHeight(items) {
         return items * 50 + (items - 1) * 3
+    }
+
+    function connectVpn(code) {
+        if (connectToVpn.running == true) return
+        connectToVpn.country = code
+        idk.connectCode = code
+        connectToVpn.running = true
     }
 
     Rectangle {
@@ -125,7 +132,7 @@ Item {
                 anchors.centerIn: parent
                 font.pointSize: Fonts.sizeS
                 font.family: Fonts.ui
-                text: activeNet == null ? "Disabled" : "Enabled"
+                text: activeNet == null ? "Disconnected" : "Connected"
                 color: Colors.on_secondary
             }
         }
@@ -349,7 +356,7 @@ Item {
                 font.pointSize: Fonts.sizeM
                 font.family: Fonts.ui
                 color: Colors.on_surface
-                text: activeNet == null ? "No Wi-Fi adapter found" : "No networks in range"
+                text: !Networking.wifiEnabled ? "Wi-Fi is turned off" : "No networks in range"
             }
         }
     }
@@ -546,7 +553,7 @@ Item {
                         font.pointSize: Fonts.sizeIcon
                         font.family: Fonts.icon
                         color: Colors.on_surface
-                        text: "globe_location_pin"
+                        text: "globe"
                     }
 
                     Text {
@@ -582,11 +589,20 @@ Item {
                         font.pointSize: Fonts.sizeIcon
                         font.family: Fonts.icon
                         color: Colors.on_surface
+                        text: idk.activeVpn == code ? "check" : ""
                     }
 
                     MouseArea {
                         id: vpnMouseArea
                         anchors.fill: parent
+                        onClicked: {
+                            if (idk.activeVpn == code) {
+                                disconnectVpn.running = true
+                            } else {
+                                idk.connectVpn(code)
+                            }
+
+                        }
                     }
                 }
             }
@@ -625,6 +641,50 @@ Item {
                 color: Colors.on_surface
                 text: "No country matches: \[" + vpnSearchField.text.trim() + "\]"
             }
+        }
+
+        Process {
+            command: [ "nmcli", "monitor" ]
+            running: true
+            stdout: SplitParser {
+                onRead: (line) => {
+                    vpnCheck.running = true
+                }
+            }
+        }
+
+        Process {
+            id: vpnCheck
+            command: ["bash", "-c", "nmcli -t -f NAME,DEVICE connection show --active | rg ':proton0$'"]
+            running: true
+            stdout: StdioCollector {
+                onStreamFinished: {
+                    let line = this.text.trim().split("\n");
+                    let vpn = "";
+                    if (line == "") {
+                        idk.activeVpn = ""
+                        return
+                    }
+
+                    line = line[0].split(":");
+                    line = line[0].split(" ");
+                    vpn = line[1].slice(0, 2).toUpperCase();
+
+                    idk.activeVpn = vpn;
+                }
+            }
+        }
+
+        Process {
+            id: connectToVpn
+            property string country
+            command: ["protonvpn", "connect", "--country", country]
+            onExited: idk.connectCode = ""
+        }
+
+        Process {
+            id: disconnectVpn
+            command: ["protonvpn", "disconnect"]
         }
     }
 }
