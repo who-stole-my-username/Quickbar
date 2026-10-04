@@ -33,7 +33,9 @@ Item {
                 font.pointSize: Fonts.sizeIcon
                 renderType: Text.NativeRendering
                 font.hintingPreference: Font.PreferNoHinting
-                font.variableAxes: ({ "FILL": 1 })
+                font.variableAxes: ({
+                        "FILL": 1
+                    })
                 text: "lightbulb"
                 color: Colors.on_primary
             }
@@ -70,7 +72,9 @@ Item {
                 anchors.baseline: brightnessPerc.baseline
                 font.pointSize: Fonts.sizeM
                 font.family: Fonts.ui
-                font.variableAxes: ({ "wght": 600 })
+                font.variableAxes: ({
+                        "wght": 600
+                    })
                 text: "%"
                 color: brightnessLvl < 90 ? Colors.on_surface : Colors.error
             }
@@ -129,8 +133,12 @@ Item {
                     height: 3.5
                     radius: 10
                     color: brightnessLvl < 90 ? Colors.primary : Colors.error
-                    
-                    Behavior on color { ColorAnimation { duration: 300 }}
+
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 300
+                        }
+                    }
                 }
             }
 
@@ -139,15 +147,18 @@ Item {
                 anchors.margins: -10
 
                 function apply(x) {
-                    let frac = (x - 10) / percBar.width
-                    let percSelection = Math.round(frac * 100)
-                    percSelection = Math.max(0, Math.min(100, percSelection))
-                    setBrightnessLvl.command = [ "brightnessctl", "set", percSelection + "%" ]
-                    setBrightnessLvl.running = true
+                    let frac = (x - 10) / percBar.width;
+                    let percSelection = Math.round(frac * 100);
+                    percSelection = Math.max(0, Math.min(100, percSelection));
+                    setBrightnessLvl.command = ["brightnessctl", "set", percSelection + "%"];
+                    setBrightnessLvl.running = true;
                 }
 
-                onClicked: (mouse) => apply(mouse.x)
-                onPositionChanged: (mouse) => { if (pressed) apply(mouse.x) }
+                onClicked: mouse => apply(mouse.x)
+                onPositionChanged: mouse => {
+                    if (pressed)
+                        apply(mouse.x);
+                }
             }
         }
 
@@ -212,7 +223,7 @@ Item {
                     font.family: "CaskaydiaCove Nerd Font"
                     color: mouseAreaPlus.containsMouse ? Colors.on_primary : Colors.primary
                     text: "+"
-                    
+
                     Behavior on color  { ColorAnimation  { duration: 100 }}
                 }
 

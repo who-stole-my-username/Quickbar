@@ -13,7 +13,7 @@ Item {
         id: clock
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        transformOrigin: Item.Top 
+        transformOrigin: Item.Top
         font.family: Fonts.ui
         font.pointSize: Fonts.sizeM
         color: Colors.on_surface
@@ -28,7 +28,7 @@ Item {
                 let hours = String(clockObj.getHours()).padStart(2, "0");
                 let minutes = String(clockObj.getMinutes()).padStart(2, "0");
                 let display = hours + ":" + minutes;
-                clock.text = display
+                clock.text = display;
             }
         }
     }
@@ -54,7 +54,7 @@ Item {
                 let month = String(dateObj.getMonth() + 1).padStart(2, "0");
                 let year = dateObj.getFullYear();
                 let display = day + "." + month + "." + year;
-                date.text = display
+                date.text = display;
             }
         }
 

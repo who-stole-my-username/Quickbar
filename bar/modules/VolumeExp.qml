@@ -10,7 +10,7 @@ Item {
     property var muted: 0
 
     PwObjectTracker {
-        objects: [ Pipewire.defaultAudioSink ]
+        objects: [Pipewire.defaultAudioSink]
     }
 
     Rectangle {
@@ -39,7 +39,9 @@ Item {
                 font.pointSize: Fonts.sizeIcon
                 renderType: Text.NativeRendering
                 font.hintingPreference: Font.PreferNoHinting
-                font.variableAxes: ({ "FILL": 1 })
+                font.variableAxes: ({
+                        "FILL": 1
+                    })
                 text: "volume_up"
                 color: Colors.on_primary
             }
@@ -103,10 +105,12 @@ Item {
                 anchors.baseline: volumePerc.baseline
                 font.pointSize: Fonts.sizeM
                 font.family: Fonts.ui
-                font.variableAxes: ({ "wght": 600 })
+                font.variableAxes: ({
+                        "wght": 600
+                    })
                 text: "%"
                 color: muted ? Colors.on_surface_variant : volumeLvl < 0.01 ? Colors.on_surface_variant : volumeLvl >= 1 ? Colors.error : Colors.on_surface
-                
+
                 Behavior on color {
                     ColorAnimation {
                         duration: Anims.effectsNormalDur
@@ -117,15 +121,14 @@ Item {
         }
 
         Canvas {
-            property real progress: muted ? 1 : volumeLvl < 0.01 ? 1 : 0 
-
             id: diagonal
+            property real progress: muted ? 1 : volumeLvl < 0.01 ? 1 : 0
             height: percRow.height
             width: percRow.width
             anchors.horizontalCenter: percRow.horizontalCenter
             anchors.verticalCenter: percRow.verticalCenter
             onProgressChanged: requestPaint()
-            
+
             Behavior on progress {
                 NumberAnimation {
                     duration: Anims.effectsNormalDur
@@ -134,16 +137,16 @@ Item {
             }
 
             onPaint: {
-                var ctx = getContext("2d")
-                ctx.clearRect(0, 0, width, height)
+                var ctx = getContext("2d");
+                ctx.clearRect(0, 0, width, height);
 
-                ctx.beginPath()
-                ctx.moveTo(2, 9)
-                ctx.lineTo(2 + progress * (width - 4), 9 + progress * (height - 18))
-                ctx.strokeStyle = Colors.on_surface_variant
-                ctx.lineWidth = 4
-                ctx.lineCap = "round"
-                ctx.stroke()
+                ctx.beginPath();
+                ctx.moveTo(2, 9);
+                ctx.lineTo(2 + progress * (width - 4), 9 + progress * (height - 18));
+                ctx.strokeStyle = Colors.on_surface_variant;
+                ctx.lineWidth = 4;
+                ctx.lineCap = "round";
+                ctx.stroke();
             }
         }
 
@@ -157,7 +160,7 @@ Item {
             anchors.rightMargin: 20
             height: 5
             color: "transparent"
-            
+
             Rectangle {
                 id: percBarFill
                 anchors.top: parent.top
@@ -191,7 +194,7 @@ Item {
                 anchors.leftMargin: 5
                 color: Colors.surface_container_highest
                 radius: 10
-                
+
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
@@ -200,8 +203,12 @@ Item {
                     height: 3.5
                     radius: 10
                     color: volumeLvl <= 1 ? Colors.primary : Colors.error
-                    
-                    Behavior on color { ColorAnimation { duration: 300 }}
+
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 300
+                        }
+                    }
                 }
             }
 
@@ -210,15 +217,18 @@ Item {
                 anchors.margins: -10
 
                 function apply(x) {
-                    let frac = (x - 10) / percBar.width
-                    let percSelection = Math.round(frac * 100)
-                    percSelection = Math.max(0, Math.min(100, percSelection))
-                    setVolumeLvl.command = [ "wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", percSelection + "%" ]
-                    setVolumeLvl.running = true
+                    let frac = (x - 10) / percBar.width;
+                    let percSelection = Math.round(frac * 100);
+                    percSelection = Math.max(0, Math.min(100, percSelection));
+                    setVolumeLvl.command = ["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", percSelection + "%"];
+                    setVolumeLvl.running = true;
                 }
 
-                onClicked: (mouse) => apply(mouse.x)
-                onPositionChanged: (mouse) => { if (pressed) apply(mouse.x) }
+                onClicked: mouse => apply(mouse.x)
+                onPositionChanged: mouse => {
+                    if (pressed)
+                        apply(mouse.x);
+                }
             }
         }
 
@@ -226,7 +236,7 @@ Item {
             id: setVolumeLvl
             running: false
         }
-/*
+        /*
         Row {
             anchors.top: percBar.bottom
             anchors.horizontalCenter: parent.horizontalCenter
@@ -291,7 +301,7 @@ Item {
                     font.family: "CaskaydiaCove Nerd Font"
                     color: mouseAreaPlus.containsMouse ? Colors.on_primary : Colors.primary
                     text: "+"
-                    
+
                     Behavior on color  { ColorAnimation  { duration: 100 }}
                 }
 

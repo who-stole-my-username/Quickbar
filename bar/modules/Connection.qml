@@ -31,20 +31,20 @@ Item {
             color: Colors.on_surface
             text: {
                 if (activeNet == null) {
-                    return "signal_wifi_off"
+                    return "signal_wifi_off";
                 } else {
                     if (signal <= 0.1) {
-                        return "signal_wifi_0_bar"
+                        return "signal_wifi_0_bar";
                     } else if (signal <= 0.2) {
-                        return "network_wifi_1_bar"
+                        return "network_wifi_1_bar";
                     } else if (signal <= 0.4) {
-                        return "network_wifi_2_bar"
+                        return "network_wifi_2_bar";
                     } else if (signal <= 0.6) {
-                        return "network_wifi_3_bar"
+                        return "network_wifi_3_bar";
                     } else if (signal <= 0.8) {
-                        return "network_wifi"
+                        return "network_wifi";
                     } else if (signal <= 1) {
-                        return "signal_wifi_4_bar"
+                        return "signal_wifi_4_bar";
                     }
                 }
             }
@@ -54,7 +54,7 @@ Item {
             id: mouseArea
             anchors.fill: parent
             onClicked: {
-                isClicked = !isClicked
+                isClicked = !isClicked;
             }
         }
     }

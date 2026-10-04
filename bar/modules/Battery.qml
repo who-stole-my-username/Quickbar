@@ -28,7 +28,9 @@ Item {
             font.pointSize: Fonts.sizeIcon
             renderType: Text.NativeRendering
             font.hintingPreference: Font.PreferNoHinting
-            font.variableAxes: ({ "FILL": batPerc / 100 })
+            font.variableAxes: ({
+                    "FILL": batPerc / 100
+                })
             color: batPerc <= 15 ? Colors.error : Colors.on_surface
             text: UPower.displayDevice.state === UPowerDeviceState.Charging ? "battery_android_bolt" : batPerc <= 15 ? "battery_android_alert" : "battery_android_0"
 
@@ -44,7 +46,7 @@ Item {
             id: mouseArea
             anchors.fill: parent
             onClicked: {
-                isClicked = !isClicked
+                isClicked = !isClicked;
             }
         }
     }

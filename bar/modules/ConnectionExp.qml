@@ -1,4 +1,3 @@
-
 import Quickshell
 import Quickshell.Io
 import Quickshell.Networking
@@ -18,8 +17,9 @@ Item {
     property bool wifiExp: false
     property bool vpnExp: false
     property real connectionsHeight: (wifiExp ? 80 + connectionsContainer.height + 20 : 80) + (vpnExp ? 200 : 80) + 92 + 15
-    
-    onWifiExpChanged: if (wifiDev) wifiDev.scannerEnabled = wifiExp
+
+    onWifiExpChanged: if (wifiDev)
+        wifiDev.scannerEnabled = wifiExp
 
     Rectangle {
         id: barContainer
@@ -51,7 +51,7 @@ Item {
             width: 40
             radius: 10
             color: Colors.primary
-            
+
             Text {
                 anchors.centerIn: parent
                 font.family: Fonts.icon
@@ -139,29 +139,29 @@ Item {
             }
 
             delegate: Item {
+                id: item
 
                 required property var modelData
                 required property int index
 
                 property bool expanded: false
-                readonly property bool last: index === connectionsContainer.count -1
-
-                id: item
+                readonly property bool last: index === connectionsContainer.count - 1
                 height: subContainer.height + subSubContainer.anchors.topMargin + subSubContainer.height
                 width: ListView.view.width
-                onExpandedChanged: if (expanded) connectionsPasswordField.forceActiveFocus()
+                onExpandedChanged: if (expanded)
+                    connectionsPasswordField.forceActiveFocus()
 
                 function submitPassword() {
-                    const pwd = connectionsPasswordField.text
+                    const pwd = connectionsPasswordField.text;
                     if (pwd.length >= 8) {
-                        modelData.connectWithPsk(pwd)
+                        modelData.connectWithPsk(pwd);
                     }
-                    connectionsPasswordField.text = ""
-                    expanded = !expanded
+                    connectionsPasswordField.text = "";
+                    expanded = !expanded;
                 }
 
                 Rectangle {
-                    id:subContainer
+                    id: subContainer
                     color: Colors.surface_container_highest
                     topLeftRadius: index === 0 ? 10 : 3
                     topRightRadius: index === 0 ? 10 : 3
@@ -171,57 +171,57 @@ Item {
                     width: parent.width
 
                     Text {
-                      id: connectionsListIcon
-                      anchors.top: parent.top
-                      anchors.topMargin: 10
-                      anchors.left: parent.left
-                      anchors.leftMargin: 10
-                      font.pointSize: Fonts.sizeIcon
-                      font.family: Fonts.icon
-                      color: Colors.on_surface
-                      text: {
-                          if (modelData.signalStrength == null) {
-                              return "signal_wifi_off"
-                          } else {
-                              if (modelData.signalStrength <= 0.1) {
-                                  return "signal_wifi_0_bar"
-                              } else if (modelData.signalStrength <= 0.2) {
-                                  return "network_wifi_1_bar"
-                              } else if (modelData.signalStrength <= 0.4) {
-                                  return "network_wifi_2_bar"
-                              } else if (modelData.signalStrength <= 0.6) {
-                                  return "network_wifi_3_bar"
-                              } else if (modelData.signalStrength <= 0.8) {
-                                  return "network_wifi"
-                              } else if (modelData.signalStrength <= 1) {
-                                  return "signal_wifi_4_bar"
-                              }
-                          }
-                      }
+                        id: connectionsListIcon
+                        anchors.top: parent.top
+                        anchors.topMargin: 10
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        font.pointSize: Fonts.sizeIcon
+                        font.family: Fonts.icon
+                        color: Colors.on_surface
+                        text: {
+                            if (modelData.signalStrength == null) {
+                                return "signal_wifi_off";
+                            } else {
+                                if (modelData.signalStrength <= 0.1) {
+                                    return "signal_wifi_0_bar";
+                                } else if (modelData.signalStrength <= 0.2) {
+                                    return "network_wifi_1_bar";
+                                } else if (modelData.signalStrength <= 0.4) {
+                                    return "network_wifi_2_bar";
+                                } else if (modelData.signalStrength <= 0.6) {
+                                    return "network_wifi_3_bar";
+                                } else if (modelData.signalStrength <= 0.8) {
+                                    return "network_wifi";
+                                } else if (modelData.signalStrength <= 1) {
+                                    return "signal_wifi_4_bar";
+                                }
+                            }
+                        }
                     }
 
                     Text {
-                      id:connectionsListName
-                      anchors.top: parent.top
-                      anchors.topMargin: 15
-                      anchors.left: connectionsListIcon.right
-                      anchors.leftMargin: 10
-                      font.pointSize: Fonts.sizeS
-                      font.family: Fonts.ui
-                      color: Colors.on_surface
-                      text: modelData.name
+                        id: connectionsListName
+                        anchors.top: parent.top
+                        anchors.topMargin: 15
+                        anchors.left: connectionsListIcon.right
+                        anchors.leftMargin: 10
+                        font.pointSize: Fonts.sizeS
+                        font.family: Fonts.ui
+                        color: Colors.on_surface
+                        text: modelData.name
                     }
-                    
+
                     Text {
-                      id:connectionsListStatus
-                      anchors.top: parent.top
-                      anchors.topMargin: 10
-                      anchors.right: parent.right
-                      anchors.rightMargin: 10
-                      font.pointSize: Fonts.sizeIcon
-                      font.family: Fonts.icon
-                      color: Colors.on_surface
-                      text: modelData.connected ? "check" : ""
+                        id: connectionsListStatus
+                        anchors.top: parent.top
+                        anchors.topMargin: 10
+                        anchors.right: parent.right
+                        anchors.rightMargin: 10
+                        font.pointSize: Fonts.sizeIcon
+                        font.family: Fonts.icon
+                        color: Colors.on_surface
+                        text: modelData.connected ? "check" : ""
                     }
 
                     MouseArea {
@@ -229,14 +229,14 @@ Item {
                         anchors.fill: parent
                         onClicked: {
                             if (modelData.connected) {
-                                modelData.disconnect()
-                                return
+                                modelData.disconnect();
+                                return;
                             }
 
                             if (modelData.known) {
-                                modelData.connect()
+                                modelData.connect();
                             } else {
-                                item.expanded = !item.expanded
+                                item.expanded = !item.expanded;
                             }
                         }
                     }
@@ -249,7 +249,7 @@ Item {
                     anchors.topMargin: height > 0 ? 3 : 0
                     height: item.expanded ? 50 : 0
                     width: parent.width
-                    visible: height > 0 
+                    visible: height > 0
                     clip: true
 
                     topLeftRadius: 3
@@ -258,8 +258,8 @@ Item {
                     bottomLeftRadius: item.last ? 10 : 3
 
                     Rectangle {
-                        color: "transparent"
                         id: connectionsPasswordBox
+                        color: "transparent"
                         anchors.fill: parent
 
                         TextInput {
@@ -324,14 +324,16 @@ Item {
             width: 40
             radius: 10
             color: Colors.primary
-            
+
             Text {
                 anchors.centerIn: parent
                 font.family: Fonts.icon
                 font.pointSize: Fonts.sizeIcon
                 renderType: Text.NativeRendering
                 font.hintingPreference: Font.PreferNoHinting
-                font.variableAxes: ({ "FILL": 1 })
+                font.variableAxes: ({
+                        "FILL": 1
+                    })
                 text: "vpn_key"
                 color: Colors.on_primary
             }
@@ -405,34 +407,34 @@ Item {
         }*/
 
         Process {
-            command: [ "nmcli", "monitor" ]
+            command: ["nmcli", "monitor"]
             running: true
             stdout: SplitParser {
-                onRead: (line) => {
-                    vpnCheck.running = true
+                onRead: line => {
+                    vpnCheck.running = true;
                 }
             }
         }
 
         Process {
             id: vpnCheck
-            command:  [ "bash", "-c", "nmcli -t -f TYPE,NAME connection show --active | rg '^(vpn|wireguard):'" ]
+            command: ["bash", "-c", "nmcli -t -f TYPE,NAME connection show --active | rg '^(vpn|wireguard):'"]
             stdout: StdioCollector {
                 onStreamFinished: {
-                    let vpn = this.text.trim().split("\n")
-                    let loc = ""
-                    if ( vpn.find(line => line.includes("wireguard"))) {
-                        vpn = vpn.find(line => line.includes("wireguard"))
-                        vpn = vpn.split(":")
-                        vpn = vpn[1].split(" ")
-                        loc = vpn[1]
-                        vpn = vpn[0]
+                    let vpn = this.text.trim().split("\n");
+                    let loc = "";
+                    if (vpn.find(line => line.includes("wireguard"))) {
+                        vpn = vpn.find(line => line.includes("wireguard"));
+                        vpn = vpn.split(":");
+                        vpn = vpn[1].split(" ");
+                        loc = vpn[1];
+                        vpn = vpn[0];
                     } else {
-                        vpn = ""
+                        vpn = "";
                     }
 
-                    activeVpn = vpn
-                    activeVpnLocation = loc
+                    activeVpn = vpn;
+                    activeVpnLocation = loc;
                 }
             }
         }

@@ -13,9 +13,9 @@ Item {
         interval: 1000
         running: true
         repeat: true
-        triggeredOnStart: true 
+        triggeredOnStart: true
         onTriggered: {
-            lastChargingProc.running = true
+            lastChargingProc.running = true;
         }
     }
 
@@ -71,7 +71,7 @@ Item {
             width: batteryStatusDisplay.implicitWidth + 15
             height: batteryStatusDisplay.implicitHeight + 5
             radius: 5
-            
+
             Text {
                 id: batteryStatusDisplay
                 anchors.centerIn: parent
@@ -109,7 +109,9 @@ Item {
                 anchors.baseline: batteryPerc.baseline
                 font.pointSize: Fonts.sizeM
                 font.family: Fonts.ui
-                font.variableAxes: ({ "wght": 600 })
+                font.variableAxes: ({
+                        "wght": 600
+                    })
                 text: "%"
                 color: batPerc <= 15 ? Colors.error : Colors.on_surface
 
@@ -123,11 +125,10 @@ Item {
         }
 
         Canvas {
+            id: waveCanvas
             property real phase: 0
             property real dotY: 0
             property real frequency: 0.12
-
-            id: waveCanvas
             anchors.left: parent.left
             anchors.leftMargin: 25
             anchors.top: batteryPercRow.bottom
@@ -135,42 +136,42 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: 20
             height: 15
-            clip:false
+            clip: false
 
             onPaint: {
-                var ctx = getContext("2d")
-                ctx.clearRect(0, 0, width, height)
+                var ctx = getContext("2d");
+                ctx.clearRect(0, 0, width, height);
 
-                var amplitude = UPower.displayDevice.state === UPowerDeviceState.Charging ? 4 : 0
-                var midY = height / 2
-                var progressX = width * batPerc / 100
+                var amplitude = UPower.displayDevice.state === UPowerDeviceState.Charging ? 4 : 0;
+                var midY = height / 2;
+                var progressX = width * batPerc / 100;
 
-                ctx.beginPath()
-                ctx.moveTo(progressX + 10, midY)
-                ctx.lineTo(width, midY)
-                ctx.strokeStyle = Colors.surface_container_highest
-                ctx.lineWidth = 5
-                ctx.lineCap = "round"
-                ctx.stroke()
+                ctx.beginPath();
+                ctx.moveTo(progressX + 10, midY);
+                ctx.lineTo(width, midY);
+                ctx.strokeStyle = Colors.surface_container_highest;
+                ctx.lineWidth = 5;
+                ctx.lineCap = "round";
+                ctx.stroke();
 
-                ctx.beginPath()
-                ctx.arc(width - 2.5, midY, 2, 0, Math.PI * 2)
-                ctx.fillStyle = batPerc <= 15 ? Colors.error : Colors.primary
-                ctx.fill()
+                ctx.beginPath();
+                ctx.arc(width - 2.5, midY, 2, 0, Math.PI * 2);
+                ctx.fillStyle = batPerc <= 15 ? Colors.error : Colors.primary;
+                ctx.fill();
 
-                ctx.beginPath()
+                ctx.beginPath();
                 for (var x = 0; x <= progressX; x++) {
-                    var y = midY + amplitude * Math.sin(frequency * x + phase)
+                    var y = midY + amplitude * Math.sin(frequency * x + phase);
                     if (x === 0) {
-                        ctx.moveTo(x, y)
+                        ctx.moveTo(x, y);
                     } else {
-                        ctx.lineTo(x, y)
+                        ctx.lineTo(x, y);
                     }
                 }
-                ctx.strokeStyle = batPerc <= 15 ? Colors.error : Colors.primary
-                ctx.lineWidth = 5
-                ctx.lineCap = "round"
-                ctx.stroke()
+                ctx.strokeStyle = batPerc <= 15 ? Colors.error : Colors.primary;
+                ctx.lineWidth = 5;
+                ctx.lineCap = "round";
+                ctx.stroke();
             }
 
             Timer {
@@ -179,8 +180,8 @@ Item {
                 repeat: true
                 onTriggered: {
                     waveCanvas.phase += 0.04;
-                    waveCanvas.dotY = waveCanvas.height / 2 + (UPower.displayDevice.state === UPowerDeviceState.Charging ? 4 : 0) * Math.sin(waveCanvas.frequency * 0 + waveCanvas.phase)
-                    waveCanvas.requestPaint()
+                    waveCanvas.dotY = waveCanvas.height / 2 + (UPower.displayDevice.state === UPowerDeviceState.Charging ? 4 : 0) * Math.sin(waveCanvas.frequency * 0 + waveCanvas.phase);
+                    waveCanvas.requestPaint();
                 }
             }
         }
@@ -259,21 +260,21 @@ Item {
                 font.pointSize: Fonts.sizeL
                 font.family: Fonts.ui
                 color: Colors.on_surface
-                
+
                 Process {
                     id: lastChargingProc
-                    command: [ "bash", "-c", "echo $(date +%s) $(cat ~/.config/scripts/files/last_charged)" ]
+                    command: ["bash", "-c", "echo $(date +%s) $(cat ~/.config/scripts/files/last_charged)"]
                     running: true
                     stdout: StdioCollector {
                         onStreamFinished: {
-                            let output = this.text
-                            output = output.split(" ")
+                            let output = this.text;
+                            output = output.split(" ");
                             if (UPower.displayDevice.state !== UPowerDeviceState.Charging) {
-                                let hours = String(Math.floor((output[0] - output[1]) / 3600))//.padStart(2, "0")
-                                let minutes = String(Math.floor(((output[0] - output[1]) % 3600) / 60))//.padStart(2, "0")
-                                lastCharging.text = hours + "h " + minutes + "m"
+                                let hours = String(Math.floor((output[0] - output[1]) / 3600));//.padStart(2, "0")
+                                let minutes = String(Math.floor(((output[0] - output[1]) % 3600) / 60));//.padStart(2, "0")
+                                lastCharging.text = hours + "h " + minutes + "m";
                             } else {
-                                lastCharging.text = "00:00"
+                                lastCharging.text = "00:00";
                             }
                         }
                     }

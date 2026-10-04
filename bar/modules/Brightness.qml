@@ -27,7 +27,9 @@ Item {
             font.pointSize: Fonts.sizeIcon
             renderType: Text.NativeRendering
             font.hintingPreference: Font.PreferNoHinting
-            font.variableAxes: ({ "FILL": acBrightness / 100 })
+            font.variableAxes: ({
+                    "FILL": acBrightness / 100
+                })
             text: "lightbulb"
             color: acBrightness < 90 ? Colors.on_surface : Colors.error
 
@@ -37,36 +39,36 @@ Item {
                     easing.bezierCurve: Anims.effectsFast
                 }
             }
-            
+
             Process {
-              id: briProc
-              command: ["brightnessctl"]
-              running: true
-              stdout: StdioCollector {
-                onStreamFinished: {
-                  let bright = this.text.split("\n")
-                  if (bright.find(line => line.includes("%"))) {
-                    bright = bright.find(line => line.includes("%"));
-                  } else {
-                    bright = ""
-                    smallBrightnessDisplay.text = "O"
-                  }
-                  bright = bright.split(" ");
-                  bright = bright[3].split("(");
-                  bright = bright[1].split("%");
-                  bright = parseInt(bright[0]);
-                  acBrightness = bright
+                id: briProc
+                command: ["brightnessctl"]
+                running: true
+                stdout: StdioCollector {
+                    onStreamFinished: {
+                        let bright = this.text.split("\n");
+                        if (bright.find(line => line.includes("%"))) {
+                            bright = bright.find(line => line.includes("%"));
+                        } else {
+                            bright = "";
+                            smallBrightnessDisplay.text = "O";
+                        }
+                        bright = bright.split(" ");
+                        bright = bright[3].split("(");
+                        bright = bright[1].split("%");
+                        bright = parseInt(bright[0]);
+                        acBrightness = bright;
+                    }
                 }
-              }
             }
-            
+
             Process {
                 id: brightnessWatcher
                 command: ["inotifywait", "-m", "-e", "modify", "/sys/class/backlight/intel_backlight/brightness"]
                 running: true
                 stdout: SplitParser {
                     onRead: data => {
-                        briProc.running = true
+                        briProc.running = true;
                     }
                 }
             }
@@ -76,7 +78,7 @@ Item {
             id: mouseArea
             anchors.fill: parent
             onClicked: {
-                isClicked = !isClicked
+                isClicked = !isClicked;
             }
         }
     }
