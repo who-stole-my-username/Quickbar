@@ -16,10 +16,23 @@ Item {
 
     property bool wifiExp: false
     property bool vpnExp: false
-    property real connectionsHeight: (wifiExp ? 80 + connectionsContainer.height + 20 : 80) + (vpnExp ? 200 : 80) + 92 + 15
+    property real connectionsHeight: (wifiExp ? 80 + connectionsContainer.height + (connectionsContainer.count === 0 ? 0 : 20) : 80) + (vpnExp ? 80 + vpnLocationSearch.height + 20 + vpnList.height + (vpnList.count === 0 ? 0 : 20) : 80) + 92 + 15
 
-    onWifiExpChanged: if (wifiDev)
+    readonly property var filterCountries: {
+        const allCountries = Object.keys(Countries.countries)
+        const search = vpnSearchField.text.trim().toLowerCase()
+        if (search === "") return allCountries
+
+        return allCountries.filter(code => Countries.countries[code].toLowerCase().includes(search) || code.toLowerCase().includes(search))
+    }
+
+    onWifiExpChanged: if (wifiDev) {
         wifiDev.scannerEnabled = wifiExp
+    }
+
+    function calcListHeight(items) {
+        return items * 50 + (items - 1) * 3
+    }
 
     Rectangle {
         id: barContainer
@@ -28,7 +41,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 1
         anchors.margins: 15
-        height: idk.wifiExp ? 80 + connectionsContainer.height + 20 : 80
+        height: idk.wifiExp ? 80 + connectionsContainer.height + (connectionsContainer.count === 0 ? 0 : 20) : 80
         radius: 12
         color: Colors.surface_container
         clip: true
@@ -123,8 +136,8 @@ Item {
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.topMargin: 80
-            anchors.margins: 20
-            height: Math.min(contentHeight, 210)
+            anchors.margins: 10
+            height: Math.min(contentHeight, idk.calcListHeight(4))
             spacing: 3
             clip: true
 
@@ -146,11 +159,12 @@ Item {
 
                 property bool expanded: false
                 readonly property bool last: index === connectionsContainer.count - 1
+
                 height: subContainer.height + subSubContainer.anchors.topMargin + subSubContainer.height
                 width: ListView.view.width
-                onExpandedChanged: if (expanded)
+                onExpandedChanged: if (expanded) {
                     connectionsPasswordField.forceActiveFocus()
-
+                }
                 function submitPassword() {
                     const pwd = connectionsPasswordField.text;
                     if (pwd.length >= 8) {
@@ -168,7 +182,17 @@ Item {
                     bottomLeftRadius: (!item.expanded && item.last) ? 10 : 3
                     bottomRightRadius: (!item.expanded && item.last) ? 10 : 3
                     height: 50
-                    width: parent.width
+                    x: 10
+                    width: parent.width - 20
+                    scale: mouseArea.pressed ? 1.02 : 1
+
+                    Behavior on scale {
+                        NumberAnimation {
+                            properties: "scale"
+                            duration: Anims.spatialFastDur
+                            easing.bezierCurve: Anims.spatialFast
+                        }
+                    }
 
                     Text {
                         id: connectionsListIcon
@@ -248,8 +272,9 @@ Item {
                     anchors.top: subContainer.bottom
                     anchors.topMargin: height > 0 ? 3 : 0
                     height: item.expanded ? 50 : 0
-                    width: parent.width
                     visible: height > 0
+                    x: 10
+                    width: parent.width - 20
                     clip: true
 
                     topLeftRadius: 3
@@ -301,7 +326,7 @@ Item {
         anchors.right: parent.right
         anchors.top: barContainer.bottom
         anchors.margins: 15
-        height: idk.vpnExp ? 200 : 80
+        height: idk.vpnExp ? 80 + vpnLocationSearch.height + 20 + vpnList.height + (vpnList.count === 0 ? 0 : 20) : 80
         radius: 12
         color: Colors.surface_container
         clip: true
@@ -312,6 +337,11 @@ Item {
                 easing.type: Easing.Bezier
                 easing.bezierCurve: Anims.spatialFast
             }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: idk.vpnExp = !idk.vpnExp
         }
 
         Rectangle {
@@ -390,51 +420,140 @@ Item {
             }
         }
 
-        MouseArea {
-            anchors.fill: parent
-            onClicked: idk.vpnExp = !idk.vpnExp //barContainer.height == 80 ? barContainer.height = 200 : barContainer.height = 80
-        }
-
-        /*Text {
-            anchors.top: iconContainerVpn.bottom
-            anchors.topMargin: 22
+        Rectangle {
+            id: vpnLocationSearch
             anchors.left: parent.left
-            anchors.leftMargin: 20
-            font.pointSize: Fonts.sizeL
-            font.family: Fonts.ui
-            text: activeVpn
-            color: Colors.on_surface
-        }*/
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.topMargin: 80
+            anchors.margins: 20
+            height: 50
+            color: Colors.surface_container_highest
+            radius: 10
 
-        Process {
-            command: ["nmcli", "monitor"]
-            running: true
-            stdout: SplitParser {
-                onRead: line => {
-                    vpnCheck.running = true;
-                }
+            TextInput {
+                id: vpnSearchField
+                anchors.fill: parent
+                anchors.leftMargin: 10
+                anchors.rightMargin: 10
+                verticalAlignment: TextInput.AlignVCenter
+                clip: true
+                font.pointSize: Fonts.sizeS
+                font.family: Fonts.ui
+                color: Colors.on_surface
+                selectByMouse: true
+            }
+
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                visible: vpnSearchField.text.length === 0
+                font.pointSize: Fonts.sizeS
+                font.family: Fonts.ui
+                color: Colors.on_surface_variant
+                text: "Search"
             }
         }
 
-        Process {
-            id: vpnCheck
-            command: ["bash", "-c", "nmcli -t -f TYPE,NAME connection show --active | rg '^(vpn|wireguard):'"]
-            stdout: StdioCollector {
-                onStreamFinished: {
-                    let vpn = this.text.trim().split("\n");
-                    let loc = "";
-                    if (vpn.find(line => line.includes("wireguard"))) {
-                        vpn = vpn.find(line => line.includes("wireguard"));
-                        vpn = vpn.split(":");
-                        vpn = vpn[1].split(" ");
-                        loc = vpn[1];
-                        vpn = vpn[0];
-                    } else {
-                        vpn = "";
+        ListView {
+            id: vpnList
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: vpnLocationSearch.bottom
+            anchors.margins: 10
+            anchors.topMargin: 20
+            height: Math.min(contentHeight, idk.calcListHeight(4))
+            spacing: 3
+            clip: true
+
+            model: idk.filterCountries
+
+            delegate: Item {
+
+                required property string modelData
+                required property int index
+
+                readonly property string code: modelData
+                readonly property string name: Countries.countries[code]
+
+                readonly property bool last: index === vpnList.count - 1
+
+                id: vpnListItem
+                height: vpnEntryBox.height
+                width: ListView.view.width
+
+                Rectangle {
+                    id: vpnEntryBox
+                    color: Colors.surface_container_highest
+                    topLeftRadius: index === 0 ? 10 : 3
+                    topRightRadius: index === 0 ? 10 : 3
+                    bottomLeftRadius: vpnListItem.last ? 10 : 3
+                    bottomRightRadius: vpnListItem.last ? 10 : 3
+                    height: 50
+                    x: 10
+                    width: parent.width - 20
+                    scale: vpnMouseArea.pressed ? 1.02 : 1
+
+                    Behavior on scale {
+                        NumberAnimation {
+                            properties: "scale"
+                            duration: Anims.spatialFastDur
+                            easing.bezierCurve: Anims.spatialFast
+                        }
                     }
 
-                    activeVpn = vpn;
-                    activeVpnLocation = loc;
+                    Text {
+                        id: vpnListIcon
+                        anchors.top: parent.top
+                        anchors.topMargin: 10
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        font.pointSize: Fonts.sizeIcon
+                        font.family: Fonts.icon
+                        color: Colors.on_surface
+                        text: "globe_location_pin"
+                    }
+
+                    Text {
+                        id: vpnListName
+                        anchors.top: parent.top
+                        anchors.topMargin: 15
+                        anchors.left: vpnListIcon.right
+                        anchors.leftMargin: 10
+                        font.pointSize: Fonts.sizeS
+                        font.family: Fonts.ui
+                        color: Colors.on_surface
+                        text: name
+                    }
+
+                    Text {
+                        id: vpnListCode
+                        anchors.top: parent.top
+                        anchors.topMargin: 15
+                        anchors.left: vpnListName.right
+                        anchors.leftMargin: 5
+                        font.pointSize: Fonts.sizeS
+                        font.family: Fonts.ui
+                        color: Colors.on_surface_variant
+                        text: "(" + code + ")"
+                    }
+
+                    Text {
+                        id: vpnListStatus
+                        anchors.top: parent.top
+                        anchors.topMargin: 10
+                        anchors.right: parent.right
+                        anchors.rightMargin: 10
+                        font.pointSize: Fonts.sizeIcon
+                        font.family: Fonts.icon
+                        color: Colors.on_surface
+                    }
+
+                    MouseArea {
+                        id: vpnMouseArea
+                        anchors.fill: parent
+                    }
                 }
             }
         }
