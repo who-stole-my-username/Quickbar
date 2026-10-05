@@ -1,6 +1,6 @@
 # Quickbar
 
-Quickbar is a minimal, Material 3 Expressive–themed status bar for Linux, written in [Quickshell](https://quickshell.org/).
+Quickbar is a minimal, Material 3 Expressive–themed status bar for Arch Linux, written in [Quickshell](https://quickshell.org/).
 
 ## Showcase
 
@@ -31,7 +31,14 @@ The entire bar follows Google's [Material 3 Expressive](https://m3.material.io/)
 - Roboto font
 
 ## Installation
-- Only works on Arch based distros that use Systemd
-- Open a terminal
-- Clone this repository (git clone https://github.com/who-stole-my-username/Quickbar)
-- Run the installation file (./Quickbar/bar/scripts/install.sh)
+**Requirements**
+- Arch based distro (pacman)
+- Systemd
+- Git
+- Bash
+
+**Commands**
+```Bash
+git clone https://github.com/who-stole-my-username/Quickbar
+bash Quickbar/bar/scripts/install.sh
+```
