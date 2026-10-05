@@ -263,7 +263,7 @@ Item {
 
                 Process {
                     id: lastChargingProc
-                    command: ["bash", "-c", "echo $(date +%s) $(cat ~/.config/scripts/files/last_charged)"]
+                    command: ["bash", "-c", "echo $(date +%s) $(cat ~/.config/quickshell/Quickbar/bar/data/last_charged.txt)"]
                     running: true
                     stdout: StdioCollector {
                         onStreamFinished: {
@@ -274,7 +274,7 @@ Item {
                                 let minutes = String(Math.floor(((output[0] - output[1]) % 3600) / 60));//.padStart(2, "0")
                                 lastCharging.text = hours + "h " + minutes + "m";
                             } else {
-                                lastCharging.text = "00:00";
+                                lastCharging.text = "0h 0m";
                             }
                         }
                     }

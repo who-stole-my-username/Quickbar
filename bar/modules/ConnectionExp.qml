@@ -30,6 +30,8 @@ Item {
         wifiDev.scannerEnabled = wifiExp
     }
 
+    onVpnExpChanged: vpnSearchField.text = ""
+
     function calcListHeight(items) {
         return items * 50 + (items - 1) * 3
     }
@@ -457,7 +459,7 @@ Item {
                 font.pointSize: Fonts.sizeS
                 font.family: Fonts.ui
                 color: Colors.on_secondary
-                text: activeVpn == "" ? "Disabled" : "Enabled"
+                text: connectToVpn.running === true ? "Connecting" : (disconnectVpn.running === true ? "Disonnecting" : (activeVpn == "" ? "Disabled" : "Enabled"))
             }
         }
 
@@ -472,10 +474,22 @@ Item {
             color: Colors.surface_container_highest
             radius: 10
 
+            Text {
+                id: searchIcon
+                anchors.top: parent.top
+                anchors.topMargin: 10
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                font.pointSize: Fonts.sizeIcon
+                font.family: Fonts.icon
+                color: Colors.on_surface
+                text: "search"
+            }
+
             TextInput {
                 id: vpnSearchField
                 anchors.fill: parent
-                anchors.leftMargin: 10
+                anchors.leftMargin: 48
                 anchors.rightMargin: 10
                 verticalAlignment: TextInput.AlignVCenter
                 clip: true
@@ -487,13 +501,32 @@ Item {
 
             Text {
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
+                anchors.left: searchIcon.right
                 anchors.leftMargin: 10
                 visible: vpnSearchField.text.length === 0
                 font.pointSize: Fonts.sizeS
                 font.family: Fonts.ui
                 color: Colors.on_surface_variant
-                text: "Search"
+                text: "Search coutnries"
+            }
+
+            Text {
+                id: clearSearchIcon
+                anchors.top: parent.top
+                anchors.topMargin: 10
+                anchors.right: parent.right
+                anchors.rightMargin: 10
+                font.pointSize: Fonts.sizeIcon
+                font.family: Fonts.icon
+                color: Colors.on_surface
+                text: "close"
+                visible: vpnSearchField.text === "" ? false : true
+                rotation: 0
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: vpnSearchField.text = ""
+                }
             }
         }
 
@@ -589,7 +622,15 @@ Item {
                         font.pointSize: Fonts.sizeIcon
                         font.family: Fonts.icon
                         color: Colors.on_surface
-                        text: idk.activeVpn == code ? "check" : ""
+                        text: (connectToVpn.running === true && idk.connectCode == code) || (disconnectVpn.running === true && idk.activeVpn === code) ? "progress_activity" : (idk.activeVpn == code ? "check" : "")
+                        RotationAnimation on rotation {
+                            running: connectToVpn.running && idk.connectCode === code || disconnectVpn.running && idk.activeVpn === code
+                            from: 0
+                            to: 360
+                            duration: 1000
+                            loops: Animation.Infinite
+                        }
+                        onTextChanged: rotation = 0
                     }
 
                     MouseArea {
@@ -639,7 +680,7 @@ Item {
                 font.pointSize: Fonts.sizeM
                 font.family: Fonts.ui
                 color: Colors.on_surface
-                text: "No country matches: \[" + vpnSearchField.text.trim() + "\]"
+                text: "No country matches: " + vpnSearchField.text.trim()
             }
         }
 
