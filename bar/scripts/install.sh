@@ -15,7 +15,7 @@ fi
 
 echo -e "${bold}Install required packages...${reset}"
 
-read -r -n 1 -p "Update your system? [Y/n] " system_upgrade
+read -r -n 1 -p "Update your system? (Stronly recommended) [Y/n] " system_upgrade
 echo
 system_upgrade=${system_upgrade:-y}
 
@@ -61,7 +61,7 @@ echo -e "${bold}Applying permissions...${reset}"
 
 chmod +x "$dest/bar/scripts/chargingTracker.sh" > /dev/null 2>&1
 
-echo -e "${bold}Messing with proton...${reset}"
+echo -e "${bold}Setting up proton...${reset}"
 
 read -r -n 1 -p "Are you already using proton-vpn-cli? [y/N] " user
 echo
@@ -87,7 +87,6 @@ fi
 
 echo -e "${bold}Starting quickshell...${reset}"
 
-pkill -x qs > /dev/null 2>&1
 setsid qs -p "$dest/shell.qml" > /dev/null 2>&1 &
 
 echo -e "${bold}${color_success}Installed successfully${reset}"
@@ -95,4 +94,4 @@ echo -e "${bold}${color_success}Installed successfully${reset}"
 echo -e "If you wish the bar to autostart after a reboot put:"
 echo -e "- .conf: exec-once = qs -p ~/.config/quickshell/Quickbar/shell.qml"
 echo -e "- .lua: hl.on(\"hyprland.start\", function() hl.exec_cmd(\"qs -p ~/.config/quickshell/Quickbar/shell.qml\") end)"
-echo -e "into you Hyprland config."
+echo -e "into your Hyprland config."

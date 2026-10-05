@@ -14,4 +14,24 @@ Quickbar is a minimal, Material 3 Expressive–themed status bar for Linux, writ
 - Battery indicator
 
 ## Theming
-The entire bar follows Google's [Material 3 Expressive](https://m3.material.io/) design language. Colors can be defined manually in `Colors.qml`, or generated automatically from the current desktop wallpaper using [matugen](https://github.com/InioX/matugen).
+The entire bar follows Google's [Material 3 Expressive](https://m3.material.io/) design language. Colors can be defined manually in `Colors.qml`.
+
+## Dependencies
+**Preinstalls**
+- Bash
+- Git
+
+**Autoinstalls**
+- Hyprland
+- Quickshell
+- Networkmanager
+- Proton-vpn-cli
+- Ripgrep
+- Material symbols
+- Roboto font
+
+## Installation
+- Only works on Arch based distros that use Systemd
+- Open a terminal
+- Clone this repository (git clone https://github.com/who-stole-my-username/Quickbar)
+- Run the installation file (./Quickbar/bar/scripts/install.sh)
