@@ -73,7 +73,7 @@ Item {
                 anchors.centerIn: parent
                 font.pointSize: Fonts.sizeS
                 font.family: Fonts.ui
-                text: Pipewire.defaultAudioSink.nickname == "Pro" ? "Internal" : "External"
+                text: Pipewire.defaultAudioSink?.nickname == "Pro" ? "Internal" : "External"
                 color: Colors.on_secondary
             }
         }
