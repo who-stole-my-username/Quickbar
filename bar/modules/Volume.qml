@@ -31,8 +31,8 @@ Item {
             renderType: Text.NativeRendering
             font.hintingPreference: Font.PreferNoHinting
             font.variableAxes: ({
-                    "FILL": 1
-                })
+                "FILL": 1
+            })
             text: {
                 if (mutedReader) {
                     smallConnectionDisplay.color = Colors.on_surface;

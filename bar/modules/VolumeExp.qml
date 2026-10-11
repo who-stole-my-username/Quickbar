@@ -40,8 +40,8 @@ Item {
                 renderType: Text.NativeRendering
                 font.hintingPreference: Font.PreferNoHinting
                 font.variableAxes: ({
-                        "FILL": 1
-                    })
+                    "FILL": 1
+                })
                 text: "volume_up"
                 color: Colors.on_primary
             }
@@ -105,9 +105,7 @@ Item {
                 anchors.baseline: volumePerc.baseline
                 font.pointSize: Fonts.sizeM
                 font.family: Fonts.ui
-                font.variableAxes: ({
-                        "wght": 600
-                    })
+                font.weight: Font.Black
                 text: "%"
                 color: muted ? Colors.on_surface_variant : volumeLvl < 0.01 ? Colors.on_surface_variant : volumeLvl >= 1 ? Colors.error : Colors.on_surface
 

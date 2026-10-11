@@ -16,7 +16,22 @@ Variants {
 
             property string activePanel: ""
             property int activePanelHeight: activePanel == "battery" ? 361 : activePanel == "brightness" ? 262 : activePanel == "volume" ? 262 : activePanel == "connection" ? connectionExp.connectionsHeight : 75
+            property int barWidth: 128
             property string pendingPanel: ""
+            property bool slider: false
+
+            Timer {
+                id: sliderTimer
+                interval: 1250
+                onTriggered: bar.slider = false
+            }
+
+            function sliderActive() {
+                if (activePanel !== "") return
+                if (!slider && hoverHandler.hovered) return
+                slider = true
+                sliderTimer.restart()
+            }
 
             property var panelModules: ({
                     "battery": battery,
@@ -46,7 +61,7 @@ Variants {
 
             Rectangle {
                 id: mainContainer
-                property real targetHeight: activePanel != "" ? activePanelHeight : hoverHandler.hovered ? 75 : 40
+                property real targetHeight: activePanel != "" ? activePanelHeight : (hoverHandler.hovered && !bar.slider) ? 75 : 40
                 property bool growingHeight: false
                 property real lastHeight: 40
 
@@ -55,7 +70,7 @@ Variants {
                     lastHeight = targetHeight;
                     heightAnimation.easing.bezierCurve = Anims.spatialFast;
                 }
-                width: 128
+                width: barWidth
                 height: targetHeight
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -122,6 +137,20 @@ Variants {
                     anchors.top: parent.top
                     transformOrigin: Item.Top
                     anchors.topMargin: 8
+                    opacity: mainContainer.state == "widened" ? 0 : 1
+                }
+
+                Modules.VolumeSlider {
+                    id: volumeSlider
+                    volumeLvl: volume.volumeReader
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: 0
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
+                    muted: volume.mutedReader
+                    opacity: mainContainer.state == "widened" ? 1 : 0
+                    visible: mainContainer.state == "widened" ? true : false
                 }
 
                 Modules.BatteryExp {
@@ -225,75 +254,25 @@ Variants {
                             scale: 1.5
                             anchors.topMargin: 8
                         }
+                    },
+                    State {
+                        name: "widened"
+                        PropertyChanges {
+                            target: mainContainer
+                            width: 250
+                        }
                     }
                 ]
 
                 transitions: [
                     Transition {
-                        to: "hovered"
-                        from: ""
+                        from: "*"
+                        to: "*"
                         NumberAnimation {
                             properties: "width, height, radius, scale"
                             duration: Anims.spatialFastDur
                             easing.bezierCurve: Anims.spatialFast
                         }
-
-                        AnchorAnimation {
-                            duration: Anims.spatialFastDur
-                            easing.bezierCurve: Anims.spatialFast
-                        }
-                    },
-                    Transition {
-                        from: "hovered"
-                        to: ""
-                        NumberAnimation {
-                            properties: "width, height, radius, scale"
-                            duration: Anims.spatialFastDur
-                            easing.bezierCurve: Anims.spatialFast
-                        }
-
-                        AnchorAnimation {
-                            duration: Anims.spatialFastDur
-                            easing.bezierCurve: Anims.spatialFast
-                        }
-                    },
-                    Transition {
-                        to: "expanded"
-                        from: "hovered"
-                        NumberAnimation {
-                            properties: "width, height, radius, scale"
-                            duration: Anims.spatialFastDur
-                            easing.bezierCurve: Anims.spatialFast
-                        }
-
-                        AnchorAnimation {
-                            duration: Anims.spatialFastDur
-                            easing.bezierCurve: Anims.spatialFast
-                        }
-                    },
-                    Transition {
-                        from: "expanded"
-                        to: "hovered"
-                        NumberAnimation {
-                            properties: "width, height, radius, scale"
-                            duration: Anims.spatialFastDur
-                            easing.bezierCurve: Anims.spatialFast
-                        }
-
-                        AnchorAnimation {
-                            duration: Anims.spatialFastDur
-                            easing.bezierCurve: Anims.spatialFast
-                        }
-                    },
-                    Transition {
-                        from: "expanded"
-                        to: ""
-                        NumberAnimation {
-                            properties: "width, height, radius, scale"
-                            duration: Anims.spatialFastDur
-                            easing.bezierCurve: Anims.spatialFast
-                        }
-
                         AnchorAnimation {
                             duration: Anims.spatialFastDur
                             easing.bezierCurve: Anims.spatialFast
@@ -320,7 +299,7 @@ Variants {
                     }
                 }
 
-                state: activePanel != "" ? "expanded" : hoverHandler.hovered ? "hovered" : ""
+                state: slider ? "widened" : activePanel != "" ? "expanded" : hoverHandler.hovered ? "hovered" : ""
             }
 
             HoverHandler {
@@ -372,6 +351,12 @@ Variants {
                 target: volume
                 function onIsClickedChanged() {
                     bar.clickHandler(volume);
+                }
+                function onVolumeReaderChanged() {
+                    bar.sliderActive();
+                }
+                function onMutedReaderChanged() {
+                    bar.sliderActive();
                 }
             }
 
