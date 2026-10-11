@@ -18,18 +18,19 @@ Variants {
             property int activePanelHeight: activePanel == "battery" ? 361 : activePanel == "brightness" ? 262 : activePanel == "volume" ? 262 : activePanel == "connection" ? connectionExp.connectionsHeight : 75
             property int barWidth: 128
             property string pendingPanel: ""
-            property bool slider: false
+            property string sliderTarget: ""
+            property bool slider: sliderTarget !== ""
 
             Timer {
                 id: sliderTimer
                 interval: 1250
-                onTriggered: bar.slider = false
+                onTriggered: bar.sliderTarget = ""
             }
 
-            function sliderActive() {
+            function sliderActive(target) {
                 if (activePanel !== "") return
-                if (!slider && hoverHandler.hovered) return
-                slider = true
+                if (sliderTarget == "" && hoverHandler.hovered) return
+                sliderTarget = target
                 sliderTimer.restart()
             }
 
@@ -149,8 +150,28 @@ Variants {
                     anchors.right: parent.right
                     anchors.rightMargin: 0
                     muted: volume.mutedReader
-                    opacity: mainContainer.state == "widened" ? 1 : 0
-                    visible: mainContainer.state == "widened" ? true : false
+                    opacity: mainContainer.state == "widened" && bar.sliderTarget == "volume" ? 1 : 0
+                    visible: opacity > 0
+
+                    Behavior on opacity {
+                        NumberAnimation { duration: 100 }
+                    }
+                }
+
+                Modules.BrightnessSlider {
+                    id: brightnessSlider
+                    brightnessLvl: brightness.acBrightness
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: 0
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
+                    opacity: mainContainer.state == "widened" && bar.sliderTarget == "brightness" ? 1 : 0
+                    visible: opacity > 0
+
+                    Behavior on opacity {
+                        NumberAnimation { duration: 100 }
+                    }
                 }
 
                 Modules.BatteryExp {
@@ -345,6 +366,9 @@ Variants {
                 function onIsClickedChanged() {
                     bar.clickHandler(brightness);
                 }
+                function onAcBrightnessChanged() {
+                    bar.sliderActive("brightness");
+                }
             }
 
             Connections {
@@ -353,10 +377,10 @@ Variants {
                     bar.clickHandler(volume);
                 }
                 function onVolumeReaderChanged() {
-                    bar.sliderActive();
+                    bar.sliderActive("volume");
                 }
                 function onMutedReaderChanged() {
-                    bar.sliderActive();
+                    bar.sliderActive("volume");
                 }
             }
 

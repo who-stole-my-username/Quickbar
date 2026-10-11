@@ -44,15 +44,8 @@ Item {
             anchors.left: parent.left
             anchors.bottom: parent.bottom
             width: parent.width * fillWidth
-            color: volumeLvl < 1 ? Colors.primary : Colors.error
+            color: Colors.primary
             radius: 10
-
-            Behavior on color {
-                ColorAnimation {
-                    duration: Anims.effectsNormalDur
-                    easing.bezierCurve: Anims.effectsNormal
-                }
-            }
 
             Behavior on fillWidth {
                 NumberAnimation {
@@ -79,13 +72,7 @@ Item {
                 width: 3.5
                 height: 3.5
                 radius: 10
-                color: volumeLvl <= 1 ? Colors.primary : Colors.error
-
-                Behavior on color {
-                    ColorAnimation {
-                        duration: 300
-                    }
-                }
+                color: Colors.primary
             }
         }
     }
