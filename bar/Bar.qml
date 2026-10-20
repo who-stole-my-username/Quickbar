@@ -15,7 +15,7 @@ Variants {
             required property var modelData
 
             property string activePanel: ""
-            property int activePanelHeight: activePanel == "battery" ? 361 : activePanel == "brightness" ? 262 : activePanel == "volume" ? 262 : activePanel == "connection" ? connectionExp.connectionsHeight : 75
+            property int activePanelHeight: activePanel == "battery" ? 361 : activePanel == "brightness" ? 262 : activePanel == "volume" ? 262 : activePanel == "connection" ? connectionExp.connectionsHeight : activePanel == "clock" ? clockExp.calHeight : 75
             property int barWidth: 128
             property string pendingPanel: ""
             property string sliderTarget: ""
@@ -35,6 +35,7 @@ Variants {
             }
 
             property var panelModules: ({
+                    "clock": clock,
                     "battery": battery,
                     "brightness": brightness,
                     "volume": volume,
@@ -171,6 +172,24 @@ Variants {
 
                     Behavior on opacity {
                         NumberAnimation { duration: 100 }
+                    }
+                }
+
+                Modules.ClockExp {
+                    id: clockExp
+                    anchors.top: mainGridLayout.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    enabled: mainContainer.state == "expanded" && bar.activePanel == "clock" ? 1 : 0
+                    opacity: mainContainer.state == "expanded" && bar.activePanel == "clock" ? 1 : 0
+
+                    Behavior on opacity {
+                        NumberAnimation {
+                            properties: "opacity"
+                            duration: mainContainer.state == "expanded" ? 150 : 200
+                            easing.type: mainContainer.state == "expanded" ? Easing.OutQuad : Easing.InQuad
+                        }
                     }
                 }
 
@@ -328,8 +347,11 @@ Variants {
                 onHoveredChanged: {
                     if (!hovered) {
                         bar.activePanel = "";
+                        clock.isClicked = false;
                         battery.isClicked = false;
                         brightness.isClicked = false;
+                        volume.isClicked = false;
+                        connection.isClicked = false;
                     }
                 }
             }
@@ -351,6 +373,13 @@ Variants {
                     if (bar.activePanel == object.panelName) {
                         bar.activePanel = "";
                     }
+                }
+            }
+
+            Connections {
+                target: clock
+                function onIsClickedChanged() {
+                    bar.clickHandler(clock);
                 }
             }
 
