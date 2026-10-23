@@ -73,7 +73,7 @@ Item {
                 anchors.centerIn: parent
                 font.pointSize: Fonts.sizeS
                 font.family: Fonts.ui
-                text: Pipewire.defaultAudioSink.nickname == "Pro" ? "Internal" : "External"
+                text: !Pipewire.defaultAudioSink ? "No output" : (Pipewire.defaultAudioSink.properties && Pipewire.defaultAudioSink.properties["device.bus"] === "pci") ? "Internal" : "External"
                 color: Colors.on_secondary
             }
         }

@@ -31,9 +31,7 @@ Item {
 
             Rectangle {
                 id: yearContainer
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.left: parent.left
-                anchors.right: parent.right
+                Layout.alignment: Qt.AlignCenter
                 height: 40
                 radius: 12
                 color: "transparent"
@@ -57,6 +55,7 @@ Item {
                 id: dayList
                 locale: calendar.locale
                 Layout.fillWidth: true
+                Layout.minimumHeight: 25
 
                 delegate: Text {
                     required property string shortName
@@ -89,13 +88,13 @@ Item {
                         width: 40
                         height: 40
                         radius: 20
-                        color: model.today ? Colors.primary : "transparent"
+                        color: (model.day == yearTracker.date.getDate() && model.month == yearTracker.date.getMonth() && model.year == yearTracker.date.getFullYear()) ? Colors.primary : "transparent"
 
                         Text {
                             anchors.centerIn: parent
                             font.family: Fonts.ui
                             font.pointSize: Fonts.sizeS
-                            color: model.today ? Colors.on_primary : model.month == calendar.month ? Colors.on_surface : Colors.on_surface_variant
+                            color: (model.day == yearTracker.date.getDate() && model.month == yearTracker.date.getMonth() && model.year == yearTracker.date.getFullYear()) ? Colors.on_primary : model.month == calendar.month ? Colors.on_surface : Colors.on_surface_variant
                             opacity: model.month == calendar.month ? 1 : 0.5
 
                             text: model.day
