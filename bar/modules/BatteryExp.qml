@@ -201,7 +201,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.margins: 15
-        columnSpacing: 100
+        columnSpacing: 15
 
         Rectangle {
             id: leftColumn
@@ -235,7 +235,6 @@ Item {
 
         Rectangle {
             id: rightColumn
-            anchors.left: leftColumn.right
             anchors.leftMargin: 15
             width: 215
             height: 82

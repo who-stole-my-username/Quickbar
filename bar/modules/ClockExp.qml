@@ -31,16 +31,45 @@ Item {
 
             Rectangle {
                 id: yearContainer
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.left: parent.left
-                anchors.right: parent.right
+                Layout.alignment: Qt.AlignCenter
                 height: 40
+                width: 400
                 radius: 12
                 color: "transparent"
 
                 SystemClock {
                     id: yearTracker
                     precision: SystemClock.Hours
+                }
+  
+                Text {
+                    id: arrowLeft
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.family: Fonts.icon
+                    font.pointSize: 30
+                    color: Colors.primary
+                    text: "arrow_left"
+                    rotation: 0
+
+                    Behavior on rotation {
+                        NumberAnimation {
+                            duration: Anims.spatialSlowDur
+                            easing.type: Easing.Bezier
+                            easing.bezierCurve: Anims.spatialFast
+                        }
+                    }
+
+                    MouseArea {
+                        id: monthMinus
+                        anchors.fill: parent
+                        onClicked: {
+                            arrowLeft.rotation = Math.ceil(arrowLeft.rotation / 360) * 360 - 360
+                            let prev = new Date(calendar.year, calendar.month - 1, 1)
+                            calendar.month = prev.getMonth()
+                            calendar.year = prev.getFullYear()
+                        }
+                    }
                 }
 
                 Text {
@@ -49,7 +78,37 @@ Item {
                     font.pointSize: Fonts.sizeL
                     font.weight: Font.Bold
                     color: Colors.primary
-                    text: Qt.formatDateTime(yearTracker.date, "MMMM yyyy")
+                    text: calendar.title
+                }
+
+                Text {
+                    id: arrowRight
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.family: Fonts.icon
+                    font.pointSize: 30
+                    color: Colors.primary
+                    text: "arrow_right"
+                    rotation: 0
+
+                    Behavior on rotation {
+                        NumberAnimation {
+                            duration: Anims.spatialSlowDur
+                            easing.type: Easing.Bezier
+                            easing.bezierCurve: Anims.spatialFast
+                        }
+                    }
+
+                    MouseArea {
+                        id: monthPlus
+                        anchors.fill: parent
+                        onClicked: {
+                            arrowRight.rotation = Math.ceil(arrowRight.rotation / 360) * 360 + 360
+                            let next = new Date(calendar.year, calendar.month + 1, 1)
+                            calendar.month = next.getMonth()
+                            calendar.year = next.getFullYear()
+                        }
+                    }
                 }
             }
 
@@ -57,6 +116,7 @@ Item {
                 id: dayList
                 locale: calendar.locale
                 Layout.fillWidth: true
+                Layout.minimumHeight: 25
 
                 delegate: Text {
                     required property string shortName
@@ -89,13 +149,13 @@ Item {
                         width: 40
                         height: 40
                         radius: 20
-                        color: model.today ? Colors.primary : "transparent"
+                        color: (model.day == yearTracker.date.getDate() && model.month == yearTracker.date.getMonth() && model.year == yearTracker.date.getFullYear()) ? Colors.primary : "transparent"
 
                         Text {
                             anchors.centerIn: parent
                             font.family: Fonts.ui
                             font.pointSize: Fonts.sizeS
-                            color: model.today ? Colors.on_primary : model.month == calendar.month ? Colors.on_surface : Colors.on_surface_variant
+                            color: (model.day == yearTracker.date.getDate() && model.month == yearTracker.date.getMonth() && model.year == yearTracker.date.getFullYear()) ? Colors.on_primary : model.month == calendar.month ? Colors.on_surface : Colors.on_surface_variant
                             opacity: model.month == calendar.month ? 1 : 0.5
 
                             text: model.day
